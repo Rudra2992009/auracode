@@ -10,8 +10,9 @@ import webbrowser
 PYTHON_BACKEND = "backend.py"
 CPP_BRIDGE_SOURCE = "bridge.cpp"
 CPP_BRIDGE_BIN = "./aura_bridge"
-JEKYLL_CMD = ["bundle", "exec", "jekyll", "serve"] # or ["jekyll", "serve"]
-LOCAL_URL = "http://localhost:4000" # Default Jekyll Port
+# Updated to a 5-digit port (54000) to avoid common port conflicts
+JEKYLL_CMD = ["bundle", "exec", "jekyll", "serve", "--port", "54000"] 
+LOCAL_URL = "http://localhost:54000" 
 
 def run_process(command, name):
     print(f"🚀 Starting {name}...")
