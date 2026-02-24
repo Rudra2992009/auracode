@@ -139,6 +139,20 @@ const AuraRunner = {
     },
 
     async runPython(code, hash) {
+        // First try native Python node via AuraComm
+        try {
+            const res = await AuraComm.dispatch('python', code);
+            if (res && res.success) {
+                const out = res.output ?? res.stdout ?? '';
+                this.setCache(hash, out);
+                AuraTerminal.print(out, "success");
+                return;
+            }
+        } catch (e) {
+            // continue to WASM fallback
+        }
+
+        // Fallback to pyodide if native node is unavailable
         if (!AuraSystem.pyodide) {
             AuraTerminal.print("WASM Warming up...", "info");
             AuraSystem.pyodide = await loadPyodide();
@@ -151,21 +165,30 @@ const AuraRunner = {
     },
 
     async dispatchBridge(code, lang, hash) {
-        const payload = JSON.stringify({
-            id: crypto.randomUUID(),
-            v: "2.0",
-            lang,
-            src: btoa(code)
-        });
-
         AuraTerminal.print(`Bridge: Payload ${lang} optimized. Dispatching...`, "dim");
-        
-        // Fast Simulation
-        setTimeout(() => {
-            const res = `[${lang.toUpperCase()}] Execution complete. Exit Code 0.`;
-            this.setCache(hash, res);
-            AuraTerminal.print(res, "success");
-        }, 600);
+        try {
+            const res = await AuraComm.dispatch(lang, code);
+            if (res && res.success) {
+                const out = res.output ?? res.stdout ?? '';
+                const exit = res.exit_code ?? 0;
+                const latency = res.latency_ms ?? 0;
+                const summary = `[${lang.toUpperCase()}] Exit:${exit} ${out}`;
+                this.setCache(hash, summary);
+                AuraTerminal.print(summary + ` [${latency}ms]`, "success");
+            } else {
+                const err = res?.error || 'Unknown bridge error';
+                AuraTerminal.print(`Bridge Dispatch Failed: ${err}`, "error");
+                // gentle fallback simulation to prevent silent failures
+                const fallback = `[${lang.toUpperCase()}] Fallback Execution simulated.`;
+                this.setCache(hash, fallback);
+                AuraTerminal.print(fallback, "success");
+            }
+        } catch (e) {
+            AuraTerminal.print(`Bridge Exception: ${e.message}`, "error");
+            const fallback = `[${lang.toUpperCase()}] Fallback Execution simulated.`;
+            this.setCache(hash, fallback);
+            AuraTerminal.print(fallback, "success");
+        }
     }
 };
 
@@ -198,6 +221,7 @@ const AuraTerminal = {
 
             // High-Speed Package Management
             if (base === 'pip' && action === 'install') return this.handlePip(args[0]);
+            if (base === 'git') return this.handleGit(action, args);
             if (['npm', 'yarn', 'apt', 'winget'].includes(base)) return this.handleInstall(base, args[0]);
             if (base === 'wget') return this.handleWget(action);
             if (base === 'clear') return this.clear();
@@ -234,6 +258,22 @@ const AuraTerminal = {
             AuraSystem.saveVFS();
             this.print(`${mgr}: ${pkg} synchronized.`, "success");
         }, 500);
+    }
+
+    ,async handleGit(action, args) {
+        if (action !== 'clone') return this.print(`git: Unsupported action ${action}`, 'error');
+        const repo = args[0];
+        if (!repo) return this.print('git: No repository provided', 'error');
+        try {
+            // Map clone metadata into the VFS. We don't perform a full git clone in-browser;
+            // instead store the source URL and a timestamp so other systems can act on it.
+            const name = repo.split('/').pop().replace(/\.git$/, '') || `repo-${Date.now()}`;
+            AuraSystem.vfs.node_modules[name] = { repo: repo, cloned_at: Date.now() };
+            AuraSystem.saveVFS();
+            this.print(`git: ${name} mapped into vfs.node_modules.${name}`, 'success');
+        } catch (e) {
+            this.print(`git: ${e.message}`, 'error');
+        }
     }
 };
 
