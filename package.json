@@ -1,0 +1,85 @@
+{
+  "name": "auracode-ultra-ide",
+  "version": "1.1.0",
+  "description": "Virtualized, multi-language decentralized development environment. Supports Python (WASM), SQL (WASM), and Native JSON Bridges for C++, Rust, and C#.",
+  "main": "index.html",
+  "author": "rudra2992009",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "start": "serve . -p 3000",
+    "dev": "browser-sync start --server --files 'index.html, style.css, work.js' --port 3000",
+    "build:cpp": "g++ bridge.cpp -o aura_bridge -lpthread -O3",
+    "build:rust": "cargo build --release",
+    "build:pwa": "pwa-asset-generator logo.svg ./icons",
+    "test": "vitest run",
+    "lint": "eslint work.js sw.js",
+    "format": "prettier --write .",
+    "deploy": "gh-pages -d .",
+    "audit:system": "echo 'Scanning Virtual File System Integrity...' && npm audit",
+    "pwa:validate": "lighthouse http://localhost:3000 --view",
+    "clean": "rm -rf node_modules dist aura_bridge"
+  },
+  "dependencies": {
+    "pyodide": "^0.25.0",
+    "sql.js": "^1.10.3",
+    "monaco-editor": "^0.47.0",
+    "idb": "^8.0.0",
+    "lucide": "^0.363.0",
+    "highlight.js": "^11.9.0",
+    "marked": "^12.0.0",
+    "jszip": "^3.10.1",
+    "axios": "^1.6.7",
+    "serve": "^14.2.1",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.2",
+    "eslint": "^8.57.0",
+    "gh-pages": "^6.1.1",
+    "prettier": "^3.2.5",
+    "terser": "^5.29.1",
+    "vitest": "^1.3.1",
+    "pwa-asset-generator": "^6.3.1"
+  },
+  "auracode_config": {
+    "runtime_strategy": "multi-threaded",
+    "storage": "indexeddb",
+    "vfs_root": "/auracode/root",
+    "communication_layer": {
+      "protocol": "JSON-Bridge",
+      "encoding": "Base64",
+      "default_node_port": 8080,
+      "bridge_timeout_ms": 15000,
+      "retry_policy": "exponential-backoff"
+    },
+    "supported_managers": [
+      "pip",
+      "npm",
+      "yarn",
+      "apt",
+      "winget",
+      "wget",
+      "git"
+    ],
+    "features": {
+      "voice_stt": true,
+      "real_time_audit": true,
+      "offline_mode": true,
+      "cloud_sync_optional": false
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rudra2992009/auracode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rudra2992009/auracode/issues"
+  },
+  "homepage": "https://rudra2992009.github.io/auracode"
+}

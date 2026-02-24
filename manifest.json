@@ -1,0 +1,34 @@
+{
+  "name": "AuraCode Ultra | Virtual IDE",
+  "short_name": "AuraCode",
+  "description": "High-performance decentralized virtual development environment with multi-engine support.",
+  "start_url": "./index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "status_bar": "black-translucent",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzA5MDkwYiIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMTkyIiBmaWxsPSJ1cmwoI2cpIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjZmMSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzNiODJmNiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Terminal",
+      "url": "./index.html?action=terminal",
+      "icons": [{ "src": "data:image/svg+xml;base64,...", "sizes": "192x192" }]
+    },
+    {
+      "name": "New Python Script",
+      "url": "./index.html?lang=python",
+      "icons": [{ "src": "data:image/svg+xml;base64,...", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["development", "education", "productivity"],
+  "prefer_related_applications": false
+}
