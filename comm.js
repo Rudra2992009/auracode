@@ -7,9 +7,9 @@
 const AuraComm = {
     // Configuration for local nodes
     nodes: {
-        cpp: "http://localhost:8080/bridge",
-        python: "http://localhost:5000/execute",
-        rust: "http://localhost:8080/bridge"
+        cpp: "http://localhost:56000/bridge",
+        python: "http://localhost:55000/execute",
+        rust: "http://localhost:58000/bridge"
     },
 
     /**
